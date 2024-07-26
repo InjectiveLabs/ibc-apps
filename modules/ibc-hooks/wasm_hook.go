@@ -6,10 +6,11 @@ import (
 
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmtypes "github.com/CosmWasm/wasmd/x/wasm/types"
+
 	"github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/keeper"
 	"github.com/cosmos/ibc-apps/modules/ibc-hooks/v8/types"
 
-	errors "cosmossdk.io/errors"
+	"cosmossdk.io/errors"
 	"cosmossdk.io/math"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -47,19 +48,23 @@ func (h WasmHooks) ProperlyConfigured() bool {
 func (h WasmHooks) OnRecvPacketOverride(im IBCMiddleware, ctx sdk.Context, packet channeltypes.Packet, relayer sdk.AccAddress) ibcexported.Acknowledgement {
 	if !h.ProperlyConfigured() {
 		// Not configured
+		println("❌ WasmHooks OnRecvPacketOverride NOT properly configured")
 		return im.App.OnRecvPacket(ctx, packet, relayer)
 	}
 	isIcs20, data := isIcs20Packet(packet.GetData())
 	if !isIcs20 {
+		println("❌ Not ICS20")
 		return im.App.OnRecvPacket(ctx, packet, relayer)
 	}
 
 	// Validate the memo
 	isWasmRouted, contractAddr, msgBytes, err := ValidateAndParseMemo(data.GetMemo(), data.Receiver)
 	if !isWasmRouted {
+		println("❌ Not WASM routed")
 		return im.App.OnRecvPacket(ctx, packet, relayer)
 	}
 	if err != nil {
+		println("❌ errored")
 		return NewEmitErrorAcknowledgement(ctx, types.ErrMsgValidation, err.Error())
 	}
 	if msgBytes == nil || contractAddr == nil { // This should never happen
@@ -87,6 +92,8 @@ func (h WasmHooks) OnRecvPacketOverride(im IBCMiddleware, ctx sdk.Context, packe
 	}
 	packet.Data = bz
 
+	println("OnRecvPacket")
+
 	// Execute the receive
 	ack := im.App.OnRecvPacket(ctx, packet, relayer)
 	if !ack.Success() {
@@ -111,8 +118,11 @@ func (h WasmHooks) OnRecvPacketOverride(im IBCMiddleware, ctx sdk.Context, packe
 		Msg:      msgBytes,
 		Funds:    funds,
 	}
+	println("execWasmMsg", execMsg.String())
+
 	response, err := h.execWasmMsg(ctx, &execMsg)
 	if err != nil {
+		println("❌ Error executing wasm msg")
 		return NewEmitErrorAcknowledgement(ctx, types.ErrWasmError, err.Error())
 	}
 

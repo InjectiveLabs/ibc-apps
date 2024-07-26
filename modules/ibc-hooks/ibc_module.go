@@ -173,17 +173,23 @@ func (im IBCMiddleware) OnRecvPacket(
 	packet channeltypes.Packet,
 	relayer sdk.AccAddress,
 ) ibcexported.Acknowledgement {
+	println("👉👉👉👉👉👉👉 IBCMiddleware OnRecvPacket start")
 	if hook, ok := im.ICS4Middleware.Hooks.(OnRecvPacketOverrideHooks); ok {
+		println("OnRecvPacketOverride")
+
 		return hook.OnRecvPacketOverride(im, ctx, packet, relayer)
 	}
 
 	if hook, ok := im.ICS4Middleware.Hooks.(OnRecvPacketBeforeHooks); ok {
+		println("OnRecvPacketBeforeHook")
 		hook.OnRecvPacketBeforeHook(ctx, packet, relayer)
 	}
 
+	println("OnRecvPacket")
 	ack := im.App.OnRecvPacket(ctx, packet, relayer)
 
 	if hook, ok := im.ICS4Middleware.Hooks.(OnRecvPacketAfterHooks); ok {
+		println("OnRecvPacketAfterHook")
 		hook.OnRecvPacketAfterHook(ctx, packet, relayer, ack)
 	}
 
