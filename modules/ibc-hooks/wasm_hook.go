@@ -60,7 +60,7 @@ func (h WasmHooks) OnRecvPacketOverride(im IBCMiddleware, ctx sdk.Context, packe
 	// Validate the memo
 	isWasmRouted, contractAddr, msgBytes, err := ValidateAndParseMemo(data.GetMemo(), data.Receiver)
 	if !isWasmRouted {
-		println("❌ Not WASM routed", err.Error())
+		println("❌ Not WASM routed")
 		return im.App.OnRecvPacket(ctx, packet, relayer)
 	}
 	if err != nil {
