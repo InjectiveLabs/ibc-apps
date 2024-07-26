@@ -61,12 +61,12 @@ func (h WasmHooks) OnRecvPacketOverride(im IBCMiddleware, ctx sdk.Context, packe
 	isWasmRouted, contractAddr, msgBytes, err := ValidateAndParseMemo(data.GetMemo(), data.Receiver)
 	if !isWasmRouted {
 		println("❌ Not WASM routed", err.Error())
-		println("❌ data.Receiver", data.Receiver)
-		println("❌ memo", data.GetMemo())
 		return im.App.OnRecvPacket(ctx, packet, relayer)
 	}
 	if err != nil {
 		println("❌ errored")
+		println("❌ data.Receiver", data.Receiver)
+		println("❌ memo", data.GetMemo())
 		return NewEmitErrorAcknowledgement(ctx, types.ErrMsgValidation, err.Error())
 	}
 	if msgBytes == nil || contractAddr == nil { // This should never happen
@@ -160,12 +160,15 @@ func jsonStringHasKey(memo, key string) (found bool, jsonObject map[string]inter
 	// If there is no memo, the packet was either sent with an earlier version of IBC, or the memo was
 	// intentionally left blank. Nothing to do here. Ignore the packet and pass it down the stack.
 	if len(memo) == 0 {
+		println("empty memo")
 		return false, jsonObject
 	}
 
 	// the jsonObject must be a valid JSON object
 	err := json.Unmarshal([]byte(memo), &jsonObject)
 	if err != nil {
+		println("Unmarshal fail")
+
 		return false, jsonObject
 	}
 
@@ -173,6 +176,7 @@ func jsonStringHasKey(memo, key string) (found bool, jsonObject map[string]inter
 	// down the stack
 	_, ok := jsonObject[key]
 	if !ok {
+		println("jsonObject has no wasm key", jsonObject)
 		return false, jsonObject
 	}
 
@@ -182,6 +186,7 @@ func jsonStringHasKey(memo, key string) (found bool, jsonObject map[string]inter
 func ValidateAndParseMemo(memo string, receiver string) (isWasmRouted bool, contractAddr sdk.AccAddress, msgBytes []byte, err error) {
 	isWasmRouted, metadata := jsonStringHasKey(memo, "wasm")
 	if !isWasmRouted {
+		println("memo dont got no wasm", memo)
 		return isWasmRouted, sdk.AccAddress{}, nil, nil
 	}
 
