@@ -35,14 +35,16 @@ func TestFullAppSimulation(t *testing.T) {
 	// run randomized simulation
 	_, simParams, simErr := simulation.SimulateFromSeed(
 		t,
+		app.Logger(),
 		os.Stdout,
 		app.BaseApp,
-		simtestutil.AppStateFn(app.AppCodec(), app.SimulationManager(), app.DefaultGenesis()),
+		simtestutil.AppStateFn(app.AppCodec(), app.AccountKeeper.AddressCodec(), app.ModuleManager.Modules, app.DefaultGenesis()),
 		simtypes.RandomAccounts, // Replace with own random account function if using keys other than secp256k1
 		simtestutil.SimulationOperations(app, app.AppCodec(), config),
 		BlockedAddresses(),
 		config,
 		app.AppCodec(),
+		app.AccountKeeper.AddressCodec(),
 	)
 
 	// export state and simParams before the simulation error is checked

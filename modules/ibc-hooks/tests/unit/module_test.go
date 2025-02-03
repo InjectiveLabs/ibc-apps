@@ -17,11 +17,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-	ibctransfer "github.com/cosmos/ibc-go/v8/modules/apps/transfer"
-	transfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
-	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
-	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
-	ibcmock "github.com/cosmos/ibc-go/v8/testing/mock"
+	ibctransfer "github.com/cosmos/ibc-go/v9/modules/apps/transfer"
+	transfertypes "github.com/cosmos/ibc-go/v9/modules/apps/transfer/types"
+	ibcclienttypes "github.com/cosmos/ibc-go/v9/modules/core/02-client/types"
+	channeltypes "github.com/cosmos/ibc-go/v9/modules/core/04-channel/types"
+	ibcmock "github.com/cosmos/ibc-go/v9/testing/mock"
 )
 
 //go:embed testdata/counter/artifacts/counter.wasm
@@ -309,6 +309,7 @@ func (suite *HooksTestSuite) TestOnAcknowledgementPacketCounterContract() {
 	err = wasmHooks.OnAcknowledgementPacketOverride(
 		ibcmiddleware,
 		suite.Ctx,
+		"1",
 		recvPacket,
 		ibcmock.MockAcknowledgement.Acknowledgement(),
 		suite.TestAddress.GetAddress(),

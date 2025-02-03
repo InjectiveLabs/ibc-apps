@@ -1,12 +1,11 @@
 package mocks
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"context"
 
-	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
-	ibcclienttypes "github.com/cosmos/ibc-go/v8/modules/core/02-client/types"
-	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
-	"github.com/cosmos/ibc-go/v8/modules/core/exported"
+	ibcclienttypes "github.com/cosmos/ibc-go/v9/modules/core/02-client/types"
+	porttypes "github.com/cosmos/ibc-go/v9/modules/core/05-port/types"
+	"github.com/cosmos/ibc-go/v9/modules/core/exported"
 )
 
 var _ porttypes.ICS4Wrapper = &ICS4WrapperMock{}
@@ -14,8 +13,7 @@ var _ porttypes.ICS4Wrapper = &ICS4WrapperMock{}
 type ICS4WrapperMock struct{}
 
 func (m *ICS4WrapperMock) SendPacket(
-	ctx sdk.Context,
-	chanCap *capabilitytypes.Capability,
+	ctx context.Context,
 	sourcePort string,
 	sourceChannel string,
 	timeoutHeight ibcclienttypes.Height,
@@ -26,8 +24,7 @@ func (m *ICS4WrapperMock) SendPacket(
 }
 
 func (m *ICS4WrapperMock) WriteAcknowledgement(
-	ctx sdk.Context,
-	chanCap *capabilitytypes.Capability,
+	ctx context.Context,
 	packet exported.PacketI,
 	ack exported.Acknowledgement,
 ) error {
@@ -35,7 +32,7 @@ func (m *ICS4WrapperMock) WriteAcknowledgement(
 }
 
 func (m *ICS4WrapperMock) GetAppVersion(
-	ctx sdk.Context,
+	ctx context.Context,
 	portID,
 	channelID string,
 ) (string, bool) {
