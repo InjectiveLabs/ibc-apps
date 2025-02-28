@@ -61,7 +61,7 @@ func (suite *HooksTestSuite) SetupEnv() {
 		nil,
 	)
 	suite.NoError(err)
-	suite.Equal("cosmos14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9s4hmalr", counterContractAddr.String())
+	suite.Equal("cosmos14hj2tavq8fpesdwxxcu44rty3hh90vhuc53mp6", counterContractAddr.String())
 
 	// create the counter contract
 	contractID, _, err = app.ContractKeeper.Create(ctx, acc.GetAddress(), echoWasm, nil)
@@ -76,7 +76,7 @@ func (suite *HooksTestSuite) SetupEnv() {
 		nil,
 	)
 	suite.NoError(err)
-	suite.Equal("cosmos1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqez7la9", echoContractAddr.String())
+	suite.Equal("cosmos1nc5tatafv6eyq7llkr2gv50ff9e22mnfapsq9f", echoContractAddr.String())
 
 	suite.App = app
 	suite.Ctx = ctx
