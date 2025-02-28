@@ -318,7 +318,7 @@ func NewSimApp(
 		authzkeeper.StoreKey, capabilitytypes.StoreKey, nftkeeper.StoreKey, circuittypes.StoreKey,
 	)
 
-	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey)
+	tkeys := storetypes.NewTransientStoreKeys(paramstypes.TStoreKey, banktypes.TStoreKey)
 	memKeys := storetypes.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
 	// load state streaming if enabled
@@ -370,6 +370,7 @@ func NewSimApp(
 	app.BankKeeper = bankkeeper.NewBaseKeeper(
 		appCodec,
 		runtime.NewKVStoreService(keys[banktypes.StoreKey]),
+		runtime.NewTransientStoreService(tkeys[banktypes.TStoreKey]),
 		app.AccountKeeper,
 		app.ModuleAccountAddrs(),
 		authority,
